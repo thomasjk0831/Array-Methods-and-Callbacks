@@ -27,23 +27,40 @@ function getFinals(data) {
 
 /* Task 3: Implement a higher-order function called `getYears` that accepts the callback function `getFinals`, and returns an array called `years` containing all of the years in the dataset */
 
-function getYears(/* code here */) {
+function getYears(callback, data) {
 
     /* code here */
+    const FinalsArray = callback(data);
+    const years = FinalsArray.map(value=>{
+        return { "Year" : value.Year}
+    });
 
+    return years;
 };
 
-getYears();
+
 
 /* Task 5: Implement a higher-order function called `getWinners`, that accepts the callback function `getFinals()` and determine the winner (home or away) of each `finals` game. Return the name of all winning countries in an array called `winners` */ 
 
-function getWinners(/* code here */) {
+function getWinners(callback, data) {
 
     /* code here */
-
+    const tempArray = callback(data);
+    const winners = tempArray.map(value => {
+        //temp variable contains who won in case of draw
+        const temp = value["Win conditions"].split(" ")
+        if(value["Home Team Goals"] > value["Away Team Goals"])
+        return { "Winner" : value["Home Team Name"]}
+        else if(value["Away Team Goals"] > value["Home Team Goals"])
+        return { "Winner" : value["Away Team Name"]}
+        else
+        return { "Winner": temp[0]}
+        
+    })
+    return winners;
 };
 
-getWinners();
+
 
 /* Task 6: Implement a higher-order function called `getWinnersByYear` that accepts the following parameters and returns a set of strings "In {year}, {country} won the world cup!" 
 
