@@ -1,17 +1,27 @@
 import { fifaData } from './fifa.js';
-console.log(fifaData);
+//console.log(fifaData);
 
 console.log('its working');
 
 // ⚽️ M  V P ⚽️ //
 
-/* Task 1: Investigate the data above. Practice accessing data by console.log-ing the following pieces of data 
+ //Task 1: Investigate the data above. Practice accessing data by console.log-ing the following pieces of data 
 
-(a) Home Team name for 2014 world cup final
-(b) Away Team name for 2014 world cup final
-(c) Home Team goals for 2014 world cup final
-(d) Away Team goals for 2014 world cup final
-(e) Winner of 2014 world cup final */
+//(a) Home Team name for 2014 world cup final
+const Arr = fifaData.filter(value=> {return value["Year"] === 2014 && value["Stage"] === "Final"} )
+console.log(Arr[0]["Home Team Name"])
+
+//(b) Away Team name for 2014 world cup final
+console.log(Arr[0]["Away Team Name"])
+//(c) Home Team goals for 2014 world cup final
+console.log(Arr[0]["Home Team Goals"])
+//(d) Away Team goals for 2014 world cup final
+console.log(Arr[0]["Away Team Goals"])
+//(e) Winner of 2014 world cup final 
+if(Arr[0]["Home Team Goals"] > Arr[0]["Away Team Goals"])
+console.log(Arr[0]["Home Team Name"])
+else
+console.log(Arr[0]["Away Team Name"])
 
 
 /* Task 2: Create a function called  getFinals that takes `data` as an argument and returns an array of objects with only finals data */
@@ -113,19 +123,31 @@ function getCountryWins(data, teamInitials) {
 
     /* code here */
     //filters out only homegames involving 'teamInitals'
-    
+    let wins = 0;
     const homeGames = data.filter(value=> 
         { return teamInitials === value["Home Team Initials"] } )
     //filters out only awaygames involving 'teamInitals'
     const awayGames = data.filter(value=> 
         { return teamInitials === value["Away Team Initials"] } )
 
-    homeGames.reduce( (accumulator, item) => {
+    wins = homeGames.reduce( (accumulator, item) => {
         if(item["Home Team Goals"] > item["Away Team Goals"])
-    })
+        return accumulator + 1;
+        else 
+        return accumulator
+    },0)
+
+    wins += awayGames.reduce( (accumulator, item) => {
+        if(item["Home Team Goals"] < item["Away Team Goals"])
+        return accumulator + 1;
+        else 
+        return accumulator
+    },0)
+
+    return wins;    
 };
 
-getCountryWins(fifaData, "BRA");
+//console.log(getCountryWins(fifaData, "USA"));
 
 
 /* Stretch 3: Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
