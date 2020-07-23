@@ -73,7 +73,7 @@ function getWinners(getFinals, data) {
     return winners;
 };
 
-//console.log(getWinners(getFinals, fifaData))
+// console.log(getWinners(getFinals, fifaData))
 
 
 /* Task 6: Implement a higher-order function called `getWinnersByYear` that accepts the following parameters and returns a set of strings "In {year}, {country} won the world cup!" 
@@ -93,7 +93,6 @@ function getWinnersByYear(getWinners, getYears, data) {
 };
 
 
-
 //getWinnersByYear(getWinners, getYears, fifaData);
 
 /* Task 7: Write a function called `getAverageGoals` that accepts a parameter `data` and returns the the average number of home team goals and away team goals scored per match (Hint: use .reduce and do this in 2 steps) */
@@ -110,7 +109,7 @@ function getAverageGoals(data) {
     
 };
 
-//console.log(getAverageGoals(fifaData));
+//console.log(getAverageGoals(fifaData))
 
 /// STRETCH 🥅 //
 
@@ -147,28 +146,158 @@ function getCountryWins(data, teamInitials) {
     return wins;    
 };
 
-//console.log(getCountryWins(fifaData, "USA"));
+console.log(getCountryWins(fifaData, "BRA"));
 
 
 /* Stretch 3: Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
 
-function getGoals(/* code here */) {
+function getGoals(data, getFinals,getTeamsFinal) {
 
     /* code here */
+    //create an array of objects that contain all world cup finals game
+    const finalArray = getFinals(data)
+    
+    //create an array of objects that contain teams that appeared in the final. 
+    // i.e [{"Team Name": Uruguay}, {Team Name: "Argentina"}...]
+    let arrayTeams = getTeamsFinal(finalArray);
+    
+    //add to arrayTeams objects #of appearances by team 
+    for(let i=0; i<arrayTeams.length; i++){
+       let appearances = finalArray.reduce( (accumulator, value)=> {
+            if( value["Home Team Name"] === arrayTeams[i]["Team Name"] || value["Away Team Name"] === arrayTeams[i]["Team Name"] )
+            return accumulator + 1;
+            else
+            return accumulator;
 
-};
+        },0)
 
-getGoals();
+        arrayTeams[i]["Appearances"] = appearances;
+    }
+    
+    //add to arrayTeams objects #of goals by team 
+    for(let i=0; i<arrayTeams.length; i++){
+        let goals = finalArray.reduce( (accumulator, value)=> {
+             if( value["Home Team Name"] === arrayTeams[i]["Team Name"]) 
+             return accumulator + value["Home Team Goals"];
+             else if( value["Away Team Name"] === arrayTeams[i]["Team Name"] )
+             return accumulator + value["Away Team Goals"];
+             else
+             return accumulator;
+             
+ 
+         },0)
+ 
+         arrayTeams[i]["Goals"] = goals;
+     }
+
+    //determine the team with the biggest goals per apperances
+    let biggest = 0;
+    let index;
+    for(let i=0; i < arrayTeams.length; i++){
+        if(arrayTeams[i]["Goals"]/ arrayTeams[i]["Appearances"] > biggest){
+        biggest = arrayTeams[i]["Goals"]/ arrayTeams[i]["Appearances"]
+        index = i;
+
+    }
+    
+    return arrayTeams[i]["Team Name"]
+}
+
+}
+
+
+console.log(getGoals(fifaData, getFinals, getTeamsFinal))
+
+//Return an array of objects that contain teams that appeared in the final. 
+//i.e [{"Team Name": Uruguay}, {Team Name: "Argentina"}...]
+function getTeamsFinal(finalArray){
+    let arrayTeams = [];
+
+    let homeTeamExists = false;
+    let awayTeamExists = false;
+    for(let i=0; i<finalArray.length; i++){
+        homeTeamExists = false;
+        awayTeamExists = false;
+        for(let j =0; j<arrayTeams.length; j++){
+            if(arrayTeams[j]["Team Name"] === finalArray[i]["Home Team Name"]){
+                homeTeamExists = true;
+            }
+            if(arrayTeams[j]["Team Name"] === finalArray[i]["Away Team Name"]){
+                awayTeamExists = true;
+            }
+
+        }
+        
+        if(!homeTeamExists){
+        arrayTeams.push( { "Team Name" : finalArray[i]["Home Team Name"]} );
+        
+        }
+        if(!awayTeamExists){
+        arrayTeams.push( { "Team Name" : finalArray[i]["Away Team Name"]} );
+        
+        }
+    }
+    
+    return arrayTeams;
+}
 
 
 /* Stretch 4: Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
 
-function badDefense(/* code here */) {
+function badDefense(data, getFinals, getTeamsFinal) {
 
     /* code here */
+    //create an array of objects that contain all finals matches
+    const aFinalsArray = getFinals(data)
+    
+    //create an array of objects that contain all teams that have been to the finals
+    //i.e [{"Team Name": Uruguay}, {Team Name: "Argentina"}...]
+    const teamsFinal = getTeamsFinal(aFinalsArray)
+    
+    
+    //add to teamsFinal objects #apperances per team
+    for(let i=0; i<teamsFinal.length; i++){
+        let appearances = aFinalsArray.reduce( (accumulator, value)=> {
+             if( value["Home Team Name"] === teamsFinal[i]["Team Name"] || value["Away Team Name"] === teamsFinal[i]["Team Name"] )
+             return accumulator + 1;
+             else
+             return accumulator;
+ 
+         },0)
+ 
+         teamsFinal[i]["Appearances"] = appearances;
+     }
 
+     //add to teamsFinal objects #goalsAgainst per team
+     for(let i=0; i<teamsFinal.length;i++){
+         let goalsAgainst = aFinalsArray.reduce( (accumulator, value)=> {
+             if( value["Home Team Name"] === teamsFinal[i]["Team Name"])
+             return accumulator + aFinalsArray[i]["Away Team Goals"];
+             else if ( value["Away Team Name"] === teamsFinal[i]["Team Name"])
+             return accumulator + aFinalsArray[i]["Home Team Goals"];
+             else
+             return accumulator;
+         },0)
+         teamsFinal[i]["Goals Against"] = goalsAgainst; 
+     }
+
+     console.log(teamsFinal)
+
+     //find the team with the biggest goals against in teamsFinal array
+     let biggest = 0;
+    let index;
+    for(let i=0; i < teamsFinal.length; i++){
+        if(teamsFinal[i]["Goals Against"]/ teamsFinal[i]["Appearances"] > biggest){
+        biggest = teamsFinal[i]["Goals Against"]/ teamsFinal[i]["Appearances"]
+        index = i;
+
+    }
+}
+    
+    return teamsFinal[index]["Team Name"]
+    
 };
 
-badDefense();
+console.log(badDefense(fifaData, getFinals, getTeamsFinal));
 
 /* If you still have time, use the space below to work on any stretch goals of your chosing as listed in the README file. */
