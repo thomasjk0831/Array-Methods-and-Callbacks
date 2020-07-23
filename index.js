@@ -241,7 +241,7 @@ function getTeamsFinal(finalArray){
     return arrayTeams;
 }
 
-
+//test
 /* Stretch 4: Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
 
 function badDefense(data, getFinals, getTeamsFinal) {
